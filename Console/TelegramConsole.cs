@@ -50,13 +50,16 @@ namespace CTelegegram
             AnsiConsole.Write(versionSeparator);
             AnsiConsole.Write(Bot_Tok);
 
-            // Boot Tooken Shhicken -> Check nach key und frage
+            // Boot Tooken Shhicken 
 
             appInfo.Tooken = Console.ReadLine();
 
             var Bot_Tok1 = new Rule($"[red]{appInfo.Tooken}[/]")
              .Centered();
+
+            AnsiConsole.Write(Bot_Tok1);
             Console.ReadKey();
+            
         }
 
 
