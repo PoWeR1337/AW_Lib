@@ -1,4 +1,11 @@
-﻿namespace AW_Lib
+﻿using AW_Lib;
+using System;
+using System.Net;
+using System.Net.NetworkInformation;
+
+
+
+namespace AW_Lib
 
     /// AW Libary 
    ///Update : 7.4.24
@@ -6,34 +13,54 @@
    ///1 APP Info -> Logging, Version
    ///2.Telegram bot implentierung
    ///3.  
-
+    
 {
-
-     /// <summary>
+   
+    /// <summary>
     /// APP Info
     /// </summary>
     public interface IAppInfo
         {
             string Title { get; set; }
             string Version { get; set; }
+            DateTime currentDate { get; set; }
+
         }
 
         public class AppInfo : IAppInfo
         {
         public string Title { get; set; } = "AW-E";
         public string Version { get; set; } = "0.0";
-        }
-    // ENDE INFO
+        public DateTime currentDate { get; set; } = DateTime.Now;
 
-
-    /// <summary>
-    /// Telegram
-    /// 
-    /// </summary>
-    class A_Bot
-    {
-        
     }
+        /// <summary>
+        /// Client Infornmations
+        /// </summary>
+    public class A_IP
+    {
+    public static string GetPublicIpAddress()
+    {
+        using (var client = new WebClient())
+        {
+            try
+            {
+                // Die externe IP-Adresse von ipinfo.io abrufen
+                string response = client.DownloadString("https://ipinfo.io/ip");
+                // Die Antwort (die IP-Adresse) parsen
+                return response.Trim();
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine($"Error retrieving public IP address: {ex.Message}");
+                return null;
+            }
+        }
+    }
+    }
+   
+
+    // ENDE INFO
 
 }
 

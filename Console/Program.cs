@@ -5,7 +5,7 @@ class Program
     static void Main(string[] args)
     {
         // Kontruktor
-
+       
         Titel();
       //  H_Menu();
     }
@@ -16,6 +16,8 @@ class Program
     /// </summary>
    public static void Titel()
     {
+        // IP Adresse
+      string IP =  A_IP.GetPublicIpAddress();
         // Erstelle eine Instanz der Klasse, die das Interface implementiert
         IAppInfo appInfo = new AppInfo();
 
@@ -29,18 +31,25 @@ class Program
             .Centered()
             .Color(Color.Blue);
 
-        // Version separator
+        // APP Version separator
         var versionSeparator = new Rule($"[red]{appInfo.Version}[/]")
             .Centered();
 
+        // IP 
+
+        appInfo.currentDate = DateTime.Now;
+        // APP Version separator
+        var Separator = new Rule($"[red]{appInfo.currentDate}[/]")
+            .Centered();
 
         // Render the interface
         AnsiConsole.Write(header);
         AnsiConsole.Write(versionSeparator);
-
-
+        AnsiConsole.Write(Separator);
     }
 
+    // Local Ip Adresse
+   
     /// <summary>
     /// Menu
     /// </summary>
@@ -51,7 +60,7 @@ class Program
         var menu = new SelectionPrompt<string>()
             .Title("[blue]Menü:[/]")
             .PageSize(5)
-            .AddChoices(new[] { "Option 1", "Option 2", "Option 3" });
+            .AddChoices(new[] { "Telegram Bot", "Option 2", "Option 3" });
 
 
         var selectedOption = AnsiConsole.Prompt(menu);
