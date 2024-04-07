@@ -1,9 +1,6 @@
 ﻿using AW_Lib;
 using System;
 using System.Net;
-using System.Net.NetworkInformation;
-
-
 
 namespace AW_Lib
 
@@ -53,7 +50,7 @@ namespace AW_Lib
             catch (WebException ex)
             {
                 Console.WriteLine($"Error retrieving public IP address: {ex.Message}");
-                return null;
+                return "None";
             }
         }
     }

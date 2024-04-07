@@ -5,15 +5,29 @@ class Program
     static void Main(string[] args)
     {
         // Kontruktor
-       
-        Titel();
-      //  H_Menu();
+
+        MainMenuKonstruktor();
+        
     }
 
     
     /// <summary>
     /// Title und Version
     /// </summary>
+    /// 
+
+    // Start Konstruktor
+    static void MainMenuKonstruktor()
+    {
+        Titel();
+        H_Menu();
+    }
+
+    static void MenuKonstruktor()
+    {
+
+    }
+
    public static void Titel()
     {
         // IP Adresse
@@ -48,6 +62,8 @@ class Program
         AnsiConsole.Write(Separator);
     }
 
+
+
     // Local Ip Adresse
    
     /// <summary>
@@ -60,12 +76,30 @@ class Program
         var menu = new SelectionPrompt<string>()
             .Title("[blue]Menü:[/]")
             .PageSize(5)
-            .AddChoices(new[] { "Telegram Bot", "Option 2", "Option 3" });
+            .AddChoices(new[] { "Telegram Bot", "Downloader", "Option 3" });
 
 
         var selectedOption = AnsiConsole.Prompt(menu);
 
         // Output the selected option
-        AnsiConsole.MarkupLine($"[yellow]STarte:[/] {selectedOption}");
+        AnsiConsole.MarkupLine($"[yellow]Starte:[/] {selectedOption}");
+
+        switch ( selectedOption )
+        {
+            case "Telegram Bot":
+                Console.Clear();
+                var header = new FigletText("TeleGram Bot")
+            .Centered()
+            .Color(Color.Blue);
+                CTelegegram.TelegramConsole.Konstruktor();
+                break;
+            case "Downloader":
+
+                break;
+            default:
+                MainMenuKonstruktor();
+                Console.Clear();
+                break;
+        }
     }
 }
