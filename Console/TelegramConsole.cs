@@ -38,7 +38,7 @@ namespace CTelegegram
             var versionSeparator = new Rule($"[red]{appInfo.Version}[/]")
                 .Centered();
 
-            // IP 
+            // Date
             appInfo.currentDate = DateTime.Now;
             // APP Version separator
             var Bot_Tok = new Rule($"[red]{appInfo.Tooken}[/]")
@@ -51,6 +51,8 @@ namespace CTelegegram
             AnsiConsole.Write(Bot_Tok);
 
             // Boot Tooken Shhicken 
+
+            // nur wenn kein tooken da ist soll :
 
             appInfo.Tooken = Console.ReadLine();
 
