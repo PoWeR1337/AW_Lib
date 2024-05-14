@@ -33,6 +33,7 @@ namespace AW_Lib
     }
         /// <summary>
         /// Client Infornmations
+        /// IP Adresse
         /// </summary>
     public class A_IP
     {

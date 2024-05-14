@@ -1,5 +1,6 @@
 ﻿using Spectre.Console;
 using AW_Lib;
+using Musik;
 class Program
 {
     static void Main(string[] args)
@@ -37,7 +38,7 @@ class Program
 
         string Titel =  appInfo.Title;
         appInfo.Title = "AWET";
-        appInfo.Version = "0.1";
+        appInfo.Version = "0.2";
 
 
         // Header with AWET
@@ -49,7 +50,11 @@ class Program
         var versionSeparator = new Rule($"[red]{appInfo.Version}[/]")
             .Centered();
 
-        // IP 
+        // IP
+        // 
+        // APP Version separator
+        var IPs = new Rule($"[red]{IP}[/]")
+            .Centered();
 
         appInfo.currentDate = DateTime.Now;
         // APP Version separator
@@ -59,6 +64,7 @@ class Program
         // Render the interface
         AnsiConsole.Write(header);
         AnsiConsole.Write(versionSeparator);
+        AnsiConsole.Write(IPs);
         AnsiConsole.Write(Separator);
     }
 
@@ -76,7 +82,7 @@ class Program
         var menu = new SelectionPrompt<string>()
             .Title("[blue]Menü:[/]")
             .PageSize(5)
-            .AddChoices(new[] { "Telegram Bot", "Downloader", "Option 3" });
+            .AddChoices(new[] { "Musik", "Krypto", "Telegram" });
 
 
         var selectedOption = AnsiConsole.Prompt(menu);
@@ -94,11 +100,16 @@ class Program
                 CTelegegram.TelegramConsole.Konstruktor();
                 break;
             case "Downloader":
-
+                Console.Clear();
+                MainMenuKonstruktor();
+                break;
+            case "Musik":
+                Console.Clear();
+                Musik.MusikConsole.konstrukt();
                 break;
             default:
-                MainMenuKonstruktor();
                 Console.Clear();
+                MainMenuKonstruktor();
                 break;
         }
     }

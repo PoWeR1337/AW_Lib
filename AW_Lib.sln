@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AW_Lib", "AW_Lib\AW_Lib.csproj", "{18879275-B87F-4B38-8B47-C294A1DD9D0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Console\Console.csproj", "{23502320-4440-4A96-8E6B-7DCAC6611AA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "Console\ConsoleApp.csproj", "{23502320-4440-4A96-8E6B-7DCAC6611AA5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{18879275-B87F-4B38-8B47-C294A1DD9D0F} = {18879275-B87F-4B38-8B47-C294A1DD9D0F}
 	EndProjectSection
