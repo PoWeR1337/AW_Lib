@@ -6,7 +6,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using TelegramBack;
+using AudioGet;
 
 namespace Musik
 {
@@ -54,7 +54,8 @@ namespace Musik
 
         static void Path()
         {
-            var pfad = "Leer";
+            var pfad = "";
+            Upload Upload = new Upload();
             // Create a menu
             var menu = new SelectionPrompt<string>()
                 .Title("[red]Menü:[/]")
@@ -68,9 +69,12 @@ namespace Musik
                 case "Local Path":
                     pfad = AnsiConsole.Ask<string>("Kompletter [green]Pfad[/]!");
                     
+                    pfad = Upload.Path;
                     break;
                 case "URL":
-                    pfad = AnsiConsole.Ask<string>("Komplette [red]URL[/]");
+                    var URL = AnsiConsole.Ask<string>("Komplette [red]URL[/]");
+
+                    URL = Upload.Path;
                     break;
 
                 default:
@@ -102,6 +106,7 @@ namespace Musik
                 case "Analyzer":
                     Console.Clear();
                     Start("Analyzer");
+                    AudioGet.Upload.File();
                     break;
                 case "Downloader":
                     Console.Clear();
