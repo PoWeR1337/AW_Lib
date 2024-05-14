@@ -3,6 +3,7 @@ using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using TelegramBack;
@@ -14,13 +15,13 @@ namespace Musik
 
 
 
-      public static void konstrukt()
+        public static void konstrukt()
         {
             Start("Musik");
             Path();
-             MusikHauptmenu();
+            MusikHauptmenu();
         }
-      
+
 
 
         static void Start(string title)
@@ -41,99 +42,44 @@ namespace Musik
             var versionSeparator = new Rule($"[red]{appInfo.Version}[/]")
                 .Centered();
             // Date
-            appInfo.currentDate = DateTime.Now;       
+            appInfo.currentDate = DateTime.Now;
             // Render the interface
             AnsiConsole.Write(header);
             AnsiConsole.Write(versionSeparator);
-          
+
 
         }
 
-        // Musik Lokal 
+        // Musik Lokal und URL Return von path
 
         static void Path()
         {
-            bool running = true;
-            while (running)
+            var pfad = "Leer";
+            // Create a menu
+            var menu = new SelectionPrompt<string>()
+                .Title("[red]Menü:[/]")
+                .PageSize(3)
+                .AddChoices(new[] { "Local Path", "URL", });
+
+            var selectedOption = AnsiConsole.Prompt(menu);
+
+            switch(selectedOption)
             {
-                // Display menu options
-                var menu = new SelectionPrompt<string>()
-                           .Title("Pfad")
-                        .PageSize(3)
-                        .AddChoices("Input file path", "Input URL", "Exit");
+                case "Local Path":
+                    pfad = AnsiConsole.Ask<string>("Kompletter [green]Pfad[/]!");
+                    
+                    break;
+                case "URL":
+                    pfad = AnsiConsole.Ask<string>("Komplette [red]URL[/]");
+                    break;
 
-
-                var selectedOption = AnsiConsole.Prompt(menu);
-
-                AnsiConsole.MarkupLine($"[red]Starte:[/] {selectedOption}");
-
-                // Process user choice
-                switch (selectedOption)
-                {
-                    case "input file path":
-                        string filePath = GetFilePath();
-                        AnsiConsole.MarkupLine($"File path entered: [yellow]{filePath}[/]");
-                        break;
-                    case "input url":
-                        string url = GetUrl();
-                        AnsiConsole.MarkupLine($"URL entered: [yellow]{url}[/]");
-                        break;
-                    case "exit":
-                        running = false;
-                        break;
-                    default:
-                        AnsiConsole.MarkupLine("[red]Invalid choice. Please enter a valid option.[/]");
-                        break;
-                }
-                AnsiConsole.WriteLine(); // Add a blank line for better readability
+                default:
+                    Console.Clear();
+                    Path();
+                    break;
             }
+        
         }
-
-        static string GetFilePath()
-        {
-            return AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter file path")
-                    .PromptStyle("grey")
-                    .Validate(path =>
-                    {
-                        if (string.IsNullOrWhiteSpace(path))
-                        {
-                            return ValidationResult.Error("File path cannot be empty.");
-                        }
-                        else if (!System.IO.File.Exists(path))
-                        {
-                            return ValidationResult.Error("File path does not exist.");
-                        }
-                        return ValidationResult.Success();
-                    })
-            );
-        }
-
-        static string GetUrl()
-        {
-            return AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter URL")
-                    .PromptStyle("grey")
-                    .Validate(url => !string.IsNullOrWhiteSpace(url) && Uri.IsWellFormedUriString(url, UriKind.Absolute) ? ValidationResult.Success() : ValidationResult.Error("URL is invalid."))
-            );
-        }
-    
-
-        static bool Location()
-        {
-
-            if (!AnsiConsole.Confirm("Lokal oder URL ? [y] Local [n] URL"))
-            {
-                AnsiConsole.MarkupLine("Ok... :(");
-                return false;
-            }
-
-            return true;
-
-        }
-
-
-
         static void MusikHauptmenu()
         {
             IAppInfo appInfo = new AppInfo();
@@ -141,7 +87,7 @@ namespace Musik
             // Create a menu
             var menu = new SelectionPrompt<string>()
                 .Title("[red]Menü:[/]")
-                .PageSize(5)
+                .PageSize(3)
                 .AddChoices(new[] { "Analyzer", "Downloader", "Converter" });
 
 
