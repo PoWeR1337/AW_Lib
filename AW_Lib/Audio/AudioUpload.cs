@@ -7,6 +7,7 @@ using AW_Lib;
 using NAudio;
 using NAudio.Wave;
 
+
 namespace AudioGet
 {
   
@@ -15,7 +16,7 @@ namespace AudioGet
         public class Upload 
         {
             public string URL { get; set; } = "Leer";
-            public static string Path { get; set; } = "Leer";
+            public static string Path { get; set; } = "C:\\Users\\nfszo\\Desktop\\weck mich.wav";
             public DateTime currentDate { get; set; } = DateTime.Now;
         
 
@@ -23,7 +24,7 @@ namespace AudioGet
 
        public static void File()
         { // URL oder lokaler Pfad
-                                                                   // string audioPath = "C:/path/to/local/audiofile.mp3"; // Beispiel für lokalen Pfad
+          // string audioPath = "C:/path/to/local/audiofile.mp3"; // Beispiel für lokalen Pfad
 
             // Lade die Audiodatei
             try

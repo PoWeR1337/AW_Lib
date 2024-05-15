@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using AudioGet;
+using Detect;
 
 namespace Musik
 {
@@ -106,7 +107,7 @@ namespace Musik
                 case "Analyzer":
                     Console.Clear();
                     Start("Analyzer");
-                    AudioGet.Upload.File();
+                    Analyzer();
                     break;
                 case "Downloader":
                     Console.Clear();
@@ -121,6 +122,14 @@ namespace Musik
                     MusikHauptmenu();
                     break;
             }
+        }
+
+        static void Analyzer()
+        {
+            AudioGet.Upload.File();
+            BPM bpm = new BPM();
+            BPM.bpm();
+            Console.ReadKey();
         }
     }
 }
