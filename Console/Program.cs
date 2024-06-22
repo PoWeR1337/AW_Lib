@@ -1,32 +1,31 @@
 ﻿using Spectre.Console;
 using AW_Lib;
 using Musik;
+using MongoDB.Driver;
+using MongoDB.Bson;
 class Program
-{
-    static void Main(string[] args)
-    {
-        // Kontruktor
-
-        MainMenuKonstruktor();
-        
-    }
-
+{    
     
     /// <summary>
+    /// Main Konstruktor
+    /// Menu Konstruktor
+    /// Datenbank Connect
     /// Title und Version
     /// </summary>
     /// 
-
+    static void Main(string[] args)
+    {
+        // Kontruktor
+        MainMenuKonstruktor();       
+    }
+          // MongoDB
+          
+    
     // Start Konstruktor
     static void MainMenuKonstruktor()
     {
         Titel();
         H_Menu();
-    }
-
-    static void MenuKonstruktor()
-    {
-
     }
 
    public static void Titel()
@@ -38,8 +37,7 @@ class Program
 
         string Titel =  appInfo.Title;
         appInfo.Title = "AWET";
-        appInfo.Version = "0.2";
-
+        appInfo.Version = 0.2;
 
         // Header with AWET
         var header = new FigletText(appInfo.Title)
@@ -68,7 +66,7 @@ class Program
         AnsiConsole.Write(Separator);
     }
 
-
+    List<string> tools = new List<string> { "Musik", "Verschlüsselung", "Passwort", "Telegram" };
 
     // Local Ip Adresse
    
@@ -82,7 +80,7 @@ class Program
         var menu = new SelectionPrompt<string>()
             .Title("[blue]Menü:[/]")
             .PageSize(5)
-            .AddChoices(new[] { "Musik", "Krypto", "Telegram" });
+            .AddChoices(new[] { "Musik", "Verschlüsselung", "Telegram" });
 
 
         var selectedOption = AnsiConsole.Prompt(menu);

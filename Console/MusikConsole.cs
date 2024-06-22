@@ -13,10 +13,7 @@ namespace Musik
 {
     internal class MusikConsole
     {
-
-
-
-        public static void konstrukt()
+  public static void konstrukt()
         {
             Start("Musik");
             Path();
@@ -31,7 +28,7 @@ namespace Musik
             IAppInfo appInfo = new AppInfo();
 
             appInfo.Title = "Musik";
-            appInfo.Version = "0.1";
+            appInfo.Version = 0.1;
             appInfo.Title = title;
 
 
