@@ -23,6 +23,8 @@ namespace AW_Lib
         bool DBConnect { get; set; }
         string DbError { get; set; }
         double Ping { get; set; }
+
+        public string On { get; set; }
     }
 
     public class AppInfo : IAppInfo
@@ -35,6 +37,7 @@ namespace AW_Lib
         public bool DBConnect { get; set; } = false;
         public string DbError { get; set; } = "0";
         public double Ping { get; set; } = 0;
+        public string On { get; set; } = "Offline";
     }
 
     // MongoDB Model
@@ -78,14 +81,31 @@ namespace AW_Lib
             }
 
             public bool Ping()
-            {
+            {      AppInfo Info = new AppInfo();
                 try
                 {
                     var pingCommand = new BsonDocument { { "ping", 1 } };
                     var pingResult = _database.RunCommand<BsonDocument>(pingCommand);
-                    return pingResult["ok"].AsDouble == 1.0;
+                    var okValue = pingResult["ok"];
+                    if (okValue is BsonInt32 okInt)
+                    {
+                       
+                        Info.DBConnect = true;
+                        return okInt.Value == 1;
+                    }
+                    else if (okValue is BsonDouble okDouble)
+                    {
+                      
+                        Info.DBConnect = true;
+                        return okDouble.Value == 1.0;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unexpected type for 'ok' value");
+                    }
                 }
-                catch (MongoException ex)
+
+                catch (Exception ex)
                 {
                     Console.WriteLine($"MongoDB Ping Error: {ex.Message}");
                     return false;
