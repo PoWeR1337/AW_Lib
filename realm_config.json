@@ -1,0 +1,8 @@
+{
+    "app_id": "aw-mlednvf",
+    "config_version": 20210101,
+    "name": "aw",
+    "provider_region": "aws-eu-central-1",
+    "deployment_model": "LOCAL",
+    "environment": "development"
+}
