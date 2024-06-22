@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -45,26 +46,60 @@ namespace AW_Lib
     public class Tool
     {
         [BsonRepresentation(BsonType.ObjectId)]
-        public string ToolId { get; set; }
+        public string ToolId { get; set; } = "1337";
 
         public ObjectId Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = "AWET";
         public List<Subtool> Subtools { get; set; }
     }
     public class Subtool
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string Id { get; set; } = "1337";
 
-        public string Name { get; set; }
-        public string Update { get; set; }
-        public string Author { get; set; }
-        public string GitHub { get; set; }
-        public Action Execute { get; set; } // Delegate to execute specific code
-
+        public string Name { get; set; } = "AW";
+        public string Update { get; set; } = "";
+        public string Author { get; set; } = "AW";
+        public string GitHub { get; set; } = "";
+        public string ExecutablePath { get; set; } = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\Program.cs";
+        public string Arguments { get; set; } = "";
+        public string WorkingDirectory { get; set; } = "";
     }
+    public class SubtoolExecutor
+    {
+        private static void ExecuteSubtool(Subtool subtool)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = subtool.ExecutablePath,
+                    Arguments = subtool.Arguments,
+                    WorkingDirectory = subtool.WorkingDirectory,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
 
+                using (Process process = Process.Start(startInfo))
+                {
+                    process.OutputDataReceived += (sender, data) => Console.WriteLine(data.Data);
+                    process.ErrorDataReceived += (sender, data) => Console.WriteLine($"Error: {data.Data}");
+
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+
+                    process.WaitForExit();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing subtool: {ex.Message}");
+            }
+        }
+    }
 
     // MongoDB Service
 
@@ -83,7 +118,9 @@ namespace AW_Lib
             }
 
             public bool Ping()
-            {      AppInfo Info = new AppInfo();
+            {    
+                AppInfo Info = new AppInfo();
+
                 try
                 {
                     var pingCommand = new BsonDocument { { "ping", 1 } };

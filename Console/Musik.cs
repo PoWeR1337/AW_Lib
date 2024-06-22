@@ -11,7 +11,7 @@ using Detect;
 
 namespace Musik
 {
-    internal class MusikConsole
+    internal class Musik
     {
 
 

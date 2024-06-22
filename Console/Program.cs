@@ -11,24 +11,44 @@ class Program
         MainMenuKonstruktor();
     }
 
-    static void MainMenuKonstruktor()
-    {  
-        
-        Titel();
+   public static void MainMenuKonstruktor()
+    {
+        AnsiConsole.Status()
+    .AutoRefresh(false)
+    .Spinner(Spinner.Known.Star)
+    .SpinnerStyle(Style.Parse("green bold"))
+    .Start("Laden...", ctx =>
+    {
+
+        try
+        {
+         Titel();
          DB.Connect();
-        
+        }
+        catch(Exception ex)
+        {
+            Console.Clear();
+            AnsiConsole.WriteException(ex);
+            MainMenuKonstruktor();
+        }
+        // Omitted
+        ctx.Refresh();
+    });
+
     }
 
     public static void Titel()
     {
-        IAppInfo appInfo = new AppInfo();
+                           IAppInfo appInfo = new AppInfo();
+        try
+        {
+ 
         string IP = A_IP.GetPublicIpAddress();
         bool db = appInfo.DBConnect;
         string update = appInfo.Updated;
         string autor = appInfo.Author;
         double ping = appInfo.Ping;
-        string On = db ? "[green]Online[/]" : "[red]Offline[/]";
-
+        string On = db ? "[green]Online[/]" : "[red]Offline[/]"; 
         var header = new FigletText(appInfo.Title).Centered().Color(Color.Blue);
         var versionSeparator = new Rule($"[red]{appInfo.Version}[/]").Centered();
         var IPs = new Rule($"[red]{IP}[/]").Centered();
@@ -40,6 +60,14 @@ class Program
         AnsiConsole.Write(DBC);
         AnsiConsole.Write(IPs);
         AnsiConsole.Write(Separator);
+        }
+        catch(Exception Ex)
+        {
+            AnsiConsole.WriteException(Ex);
+            Thread.Sleep(1000);
+            Console.Clear();
+            MainMenuKonstruktor();
+        }
     }
 }
 
@@ -97,6 +125,10 @@ public class DB
                     table.AddRow("GitHub", selectedSubtool.GitHub);
 
                     AnsiConsole.Write(table);
+                    Console.ReadLine();
+                    Console.Clear();
+                    Program p = new Program();
+                    Program.MainMenuKonstruktor();
                     break;
                 case "Start":
                     // Start the subtool
