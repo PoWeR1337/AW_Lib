@@ -24,13 +24,13 @@ namespace AW_Lib
 
         public static void Main(string[] args)
         {
-           
+            Datenbank d = new Datenbank(); 
             // Database Connect
             Datenbank.MongoDB();
             // Version
             IAppInfo appInfo = new AppInfo();
             appInfo.Version = 0.12;
-         
+            
         }        
     } 
     }
@@ -66,8 +66,7 @@ namespace AW_Lib
     /// </summary>  
     /// 
     public class Datenbank
-    {
-             
+    {           
         // Datenbank Connect 
        public static void MongoDB()
         {
@@ -78,12 +77,14 @@ namespace AW_Lib
             #pragma warning restore CS0219 // Variable ist zugewiesen, der Wert wird jedoch niemals verwendet
              var error = "";
 
-            const string connectionUri = "mongodb+srv://admin:<password>@awdata.yt88x.mongodb.net/?retryWrites=true&w=majority&appName=awdata";
-            var settings = MongoClientSettings.FromConnectionString(connectionUri);
-            // Create a new client and connect to the server
-            var client = new MongoClient(settings);
-            // Send a ping to confirm a successful connection
-            try
+        const string connectionUri = "mongodb+srv://power:power1337@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw";
+        var settings = MongoClientSettings.FromConnectionString(connectionUri);
+        // Set the ServerApi field of the settings object to set the version of the Stable API on the client
+        settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+        // Create a new client and connect to the server
+        var client = new MongoClient(settings);
+        // Send a ping to confirm a successful connection
+        try
             {
                 var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
                 DB = true;
@@ -99,14 +100,32 @@ namespace AW_Lib
             }
               
         }
-         public void DBTest()
-    {
 
+    // Tool database
+    public class Tool
+    {
+        public string Name { get; set; }
+        public List<string> Subtools { get; set; }
+        public string Version { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime Update { get; set; }
+        public string Author { get; set; }
+
+        public Tool(string name, List<string> subtools, string version, bool isActive, DateTime update, string author)
+        {
+            Name = name;
+            Subtools = subtools;
+            Version = version;
+            IsActive = isActive;
+            Update = update;
+            Author = author;
+        }
     }
 
-            // Get set Methode für Error und Verbindung
 
-        public class DBInfo
+    // Get set Methode für Error und Verbindung
+
+    public class DBInfo
         {
             public string Fehler { get; set; }
             public bool IsActive { get; set; }
@@ -117,7 +136,7 @@ namespace AW_Lib
                 Fehler = error;
                 IsActive = DB;
                 IAppInfo a = new AppInfo();
-                a.DBConnect = DB;
+                a.DBConnect = IsActive;
                 a.dberror = Fehler;
 
             }

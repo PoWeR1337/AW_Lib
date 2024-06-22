@@ -13,7 +13,10 @@ namespace Musik
 {
     internal class MusikConsole
     {
-  public static void konstrukt()
+
+
+
+        public static void konstrukt()
         {
             Start("Musik");
             Path();

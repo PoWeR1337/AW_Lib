@@ -38,6 +38,9 @@ class Program
         string Titel =  appInfo.Title;
         appInfo.Title = "AWET";
         appInfo.Version = 0.2;
+        bool db = appInfo.DBConnect;
+        string update = appInfo.Updated;
+        string autor = appInfo.Author;
 
         // Header with AWET
         var header = new FigletText(appInfo.Title)
@@ -51,9 +54,16 @@ class Program
         // IP
         // 
         // APP Version separator
+        //IP
         var IPs = new Rule($"[red]{IP}[/]")
             .Centered();
-
+        //Database string 
+        var DBC = new Rule($"[red]{db}[/]")
+            .Centered();
+        // Autor
+        var AT = new Rule($"[red]{autor}[/]")
+    .Centered();
+        //Datum
         appInfo.currentDate = DateTime.Now;
         // APP Version separator
         var Separator = new Rule($"[red]{appInfo.currentDate}[/]")
@@ -62,7 +72,7 @@ class Program
         // Render the interface
         AnsiConsole.Write(header);
         AnsiConsole.Write(versionSeparator);
-        AnsiConsole.Write(IPs);
+        AnsiConsole.Write(DBC);
         AnsiConsole.Write(Separator);
     }
 
