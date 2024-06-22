@@ -37,11 +37,20 @@ namespace AW_Lib
         public bool DBConnect { get; set; } = false;
         public string DbError { get; set; } = "0";
         public double Ping { get; set; } = 0;
-        public string On { get; set; } = "Offline";
+        public string On { get; set; } = "";
     }
 
     // MongoDB Model
+      
+    public class Tool
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ToolId { get; set; }
 
+        public ObjectId Id { get; set; }
+        public string Name { get; set; }
+        public List<Subtool> Subtools { get; set; }
+    }
     public class Subtool
     {
         [BsonId]
@@ -52,17 +61,10 @@ namespace AW_Lib
         public string Update { get; set; }
         public string Author { get; set; }
         public string GitHub { get; set; }
+        public Action Execute { get; set; } // Delegate to execute specific code
+
     }
 
-    public class Tool
-    {
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string ToolId { get; set; }
-
-        public ObjectId Id { get; set; }
-        public string Name { get; set; }
-        public List<Subtool> Subtools { get; set; }
-    }
 
     // MongoDB Service
 

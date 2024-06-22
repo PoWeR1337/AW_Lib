@@ -2,6 +2,7 @@
 using AW_Lib;
 using MongoDB.Driver;
 using static AW_Lib.Database;
+using System.Diagnostics;
 
 class Program
 {
@@ -52,10 +53,9 @@ public class DB
 
         if (_dbService.Ping())
         {
-            IAppInfo appInfo = new AppInfo();
+            AppInfo appInfo = new AppInfo();
             appInfo.DBConnect = true;
             appInfo.On = "Online";
-            AnsiConsole.MarkupLine("[green]Database connection successful![/]");
             // Load tools from database
             var toolsCollection = _dbService.GetCollection<Tool>("Tool");
             var tools = toolsCollection.Find(tool => true).ToList();
@@ -101,7 +101,8 @@ public class DB
                 case "Start":
                     // Start the subtool
                     Console.WriteLine($"Starting [blue]{selectedSubtool.Name}[/]...");
-                    // Add code to start the subtool here
+                    // Execute the subtool
+                    ExecuteSubtool(selectedSubtool);
                     break;
             }
         }
@@ -109,5 +110,20 @@ public class DB
         {
             AnsiConsole.MarkupLine("[red]Database connection failed![/]");
         }
+    }
+        private static void ExecuteSubtool(Subtool subtool)
+    {
+        // Execute the subtool here
+        // For example, you can use Process.Start to execute a command
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = subtool.Name,
+            Arguments = subtool.Update,
+            WorkingDirectory = subtool.GitHub,
+            CreateNoWindow = true,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        });
     }
 }
