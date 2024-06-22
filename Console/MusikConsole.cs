@@ -43,7 +43,7 @@ namespace Musik
             var versionSeparator = new Rule($"[red]{appInfo.Version}[/]")
                 .Centered();
             // Date
-            appInfo.currentDate = DateTime.Now;
+            appInfo.CurrentDate = DateTime.Now;
             // Render the interface
             AnsiConsole.Write(header);
             AnsiConsole.Write(versionSeparator);

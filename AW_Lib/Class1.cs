@@ -1,195 +1,104 @@
-﻿using AW_Lib;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using System;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-
 namespace AW_Lib
-
-/// AW Libary 
-///Update : 7.4.24
-///ToDo :
-///1 APP Info -> Logging, Version
-///2.Telegram bot implentierung
-///3.  
-
 {
-    public class Konstruktor
+    public class LibraryInitializer
     {
-               /// <summary>
-               /// TOdo -> Initialisieren von :
-               /// 
-               /// </summary>
-               /// <param name="args"></param>
-
-        public static void Main(string[] args)
-        {
-           
-            // Database Connect
-           
-            // Version
-            IAppInfo appInfo = new AppInfo();
-            appInfo.Version = 0123;
-            
-
-        }        
-    } 
+        // TOdo -> Initialisieren von :
     }
-    /// <summary>
-    /// APP Info
-    /// </summary>
+
     public interface IAppInfo
     {
         string Title { get; set; }
         double Version { get; set; }
         string Author { get; set; }
         string Updated { get; set; }
-        DateTime currentDate { get; set; }
+        DateTime CurrentDate { get; set; }
         bool DBConnect { get; set; }
-        string dberror { get; set; }
-    string Ping { get; set; }
-}
+        string DbError { get; set; }
+        double Ping { get; set; }
+    }
 
     public class AppInfo : IAppInfo
     {
         public string Title { get; set; } = "AW-E";
         public double Version { get; set; } = 0.1;
-        public DateTime currentDate { get; set; } = DateTime.Now;
+        public DateTime CurrentDate { get; set; } = DateTime.Now;
         public string Author { get; set; } = "AW";
-        public string Updated { get; set; } = "21.06.2024";
-    public bool DBConnect { get; set; } = true;
-        public string dberror { get; set; } = "0";
-    public string Ping { get; set; } = "0";
+        public string Updated { get; set; } = "22.06.2024";
+        public bool DBConnect { get; set; } = false;
+        public string DbError { get; set; } = "0";
+        public double Ping { get; set; } = 00;
+    }
+
+    // MongoDB
 
    
-
-    }
-/// <summary>
-/// Datenbank
-/// |MongoDB|
-/// </summary>  
-/// 
-public class Datenbank
+    public class Subtool
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
 
-  public string rs { get; set; } = "";
+    public string Name { get; set; }
+    public string Update { get; set; }
+    public string Author { get; set; }
+    public string GitHub { get; set; }
+}
+    
 
-
-
-    private readonly MongoClient _client;
-
-    public Datenbank()
+    public class Tool
     {
-        ConnectToMongoDB(Get_client());
+        [BsonId]
+        public ObjectId Id { get; set; }
+        public string Name { get; set; }
+        public List<Subtool> Subtools { get; set; }
     }
-
-    private MongoClient Get_client()
+    
+    public class DatabaseService
     {
-        return _client;
-    }
+        private readonly IMongoDatabase _database;
 
-    private void ConnectToMongoDB(MongoClient _client)
-    {
-        // Verbindung check
-#pragma warning disable CS0219 // Variable ist zugewiesen, der Wert wird jedoch niemals verwendet
-        bool DB = false;
-        // #pragma warning restore CS0219 // Variable ist zugewiesen, der Wert wird jedoch niemals verwendet
-        var error = "";
+        public DatabaseService(string connectionString, string databaseName)
+        {
+            var client = new MongoClient(connectionString);
+            _database = client.GetDatabase(databaseName);
+        }
 
-            const string connectionUri = "mongodb+srv://power:<password>@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw";
-            var settings = MongoClientSettings.FromConnectionString(connectionUri);
-            settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-        _client = new MongoClient(settings);
-
+        public bool Ping()
+        {
             try
             {
-                var result = _client.GetDatabase("aw").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
-                rs = (string)result;
-                AppInfo info = new AppInfo();
-            info.Ping = rs;
-                DB = true;
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-            
-
-        }
-
-    }
-    
-       
-       
-           public static async Task<List<string>> ListDatabase()
-            {
-            
-                var client = new MongoClient("mongodb+srv://power:<password>@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw");
-
-                var databases = await client.ListDatabasesAsync();
-
-                List<string> databaseList = new List<string>();
-
-                foreach (var database in databases.ToBson())
-                {
-                    databaseList.Add(database.ToString());
-                }
-
-                return databaseList;
+                _database.RunCommandAsync((Command<BsonDocument>)"{ping:1}").Wait();
+                return true;
             }
- 
-         }
-         
-    
-
-        
-
-    
-
-
-    // Get set Methode für Error und Verbindung
-
-    public class DBInfo
-    {
-        public string Fehler { get; set; } = "";
-        public bool IsActive { get; set; } = false;
-
-        // Constructor to initialize the properties
-        public DBInfo(string error, bool DB)
-        {
-            error = Fehler;
-            DB = IsActive;
-            IAppInfo a = new AppInfo();
-            a.DBConnect = IsActive;
-            a.dberror = Fehler;
-
+            catch (Exception)
+            {
+                return false;
+            }
         }
-        
+
+        public IMongoCollection<T> GetCollection<T>(string name)
+        {
+            return _database.GetCollection<T>(name);
+        }
     }
-
-
-
-
-
-
-
-    /// <summary>
-    /// IP
-    /// </summary>
     public class A_IP
     {
         public static string GetPublicIpAddress()
         {
-
             using (var client = new WebClient())
             {
                 try
                 {
-                    // Die externe IP-Adresse von ipinfo.io abrufen
                     string response = client.DownloadString("https://ipinfo.io/ip");
-                    // Die Antwort (die IP-Adresse) parsen
                     return response.Trim();
                 }
                 catch (WebException ex)
@@ -198,17 +107,6 @@ public class Datenbank
                     return "None";
                 }
             }
-#pragma warning restore IDE0063 // Einfache using-Anweisung verwenden
         }
     }
-
-
-   
-
-    // ENDE INFO
-
-
-
-    
-
-
+}
