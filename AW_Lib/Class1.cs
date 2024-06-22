@@ -2,16 +2,15 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Net;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography.X509Certificates;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AW_Lib
 {
     public class LibraryInitializer
     {
-        // TOdo -> Initialisieren von :
+        // Hier können Initialisierungsaufgaben hinzugefügt werden, falls benötigt
     }
 
     public interface IAppInfo
@@ -35,61 +34,82 @@ namespace AW_Lib
         public string Updated { get; set; } = "22.06.2024";
         public bool DBConnect { get; set; } = false;
         public string DbError { get; set; } = "0";
-        public double Ping { get; set; } = 00;
+        public double Ping { get; set; } = 0;
     }
 
-    // MongoDB
+    // MongoDB Model
 
-   
     public class Subtool
-{
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; }
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
-    public string Name { get; set; }
-    public string Update { get; set; }
-    public string Author { get; set; }
-    public string GitHub { get; set; }
-}
-    
+        public string Name { get; set; }
+        public string Update { get; set; }
+        public string Author { get; set; }
+        public string GitHub { get; set; }
+    }
 
     public class Tool
     {
-        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ToolId { get; set; }
+
         public ObjectId Id { get; set; }
         public string Name { get; set; }
         public List<Subtool> Subtools { get; set; }
     }
-    
-    public class DatabaseService
+
+    // MongoDB Service
+
+    public class Database
     {
         private readonly IMongoDatabase _database;
 
-        public DatabaseService(string connectionString, string databaseName)
+        public class DatabaseService
         {
-            var client = new MongoClient(connectionString);
-            _database = client.GetDatabase(databaseName);
+            private readonly IMongoDatabase _database;
+
+            public DatabaseService(string connectionString, string databaseName)
+            {
+                var client = new MongoClient(connectionString);
+                _database = client.GetDatabase(databaseName);
+            }
+
+            public bool Ping()
+            {
+                try
+                {
+                    var pingCommand = new BsonDocument { { "ping", 1 } };
+                    var pingResult = _database.RunCommand<BsonDocument>(pingCommand);
+                    return pingResult["ok"].AsDouble == 1.0;
+                }
+                catch (MongoException ex)
+                {
+                    Console.WriteLine($"MongoDB Ping Error: {ex.Message}");
+                    return false;
+                }
+            }
+
+            public IMongoCollection<T> GetCollection<T>(string name) where T : class
+            {
+                try
+                {
+                    return _database.GetCollection<T>(name);
+                }
+                catch (MongoException ex)
+                {
+                    Console.WriteLine($"Error retrieving collection '{name}': {ex.Message}");
+                    throw; // Optionally handle or log the exception further
+                }
+            }
         }
 
-        public bool Ping()
-        {
-            try
-            {
-                _database.RunCommandAsync((Command<BsonDocument>)"{ping:1}").Wait();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public IMongoCollection<T> GetCollection<T>(string name)
-        {
-            return _database.GetCollection<T>(name);
-        }
     }
+
+    // IP Address Helper
+
     public class A_IP
     {
         public static string GetPublicIpAddress()

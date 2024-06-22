@@ -28,7 +28,7 @@ namespace Musik
         static void Start(string title)
         {
             // new APP Info Interface
-            IAppInfo appInfo = new AppInfo();
+            AppInfo appInfo = new AppInfo();
 
             appInfo.Title = "Musik";
             appInfo.Version = 0.1;
@@ -87,7 +87,7 @@ namespace Musik
         }
         static void MusikHauptmenu()
         {
-            IAppInfo appInfo = new AppInfo();
+            AppInfo appInfo = new AppInfo();
 
             // Create a menu
             var menu = new SelectionPrompt<string>()
