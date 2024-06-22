@@ -1,8 +1,9 @@
 ﻿using Spectre.Console;
 using AW_Lib;
 using MongoDB.Driver;
-using static AW_Lib.Database;
 using System.Diagnostics;
+using static Database;
+
 
 class Program
 {
@@ -76,12 +77,15 @@ class Program
 public class DB
 {
     private static DatabaseService _dbService;
-
+       
     public static void Connect()
     {
-        _dbService = new DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
 
-        if (_dbService.Ping())
+        if (!_dbService.Ping())
+        {
+            AnsiConsole.MarkupLine("[red]Database connection failed![/]");
+        }
+        else
         {
             AppInfo appInfo = new AppInfo();
             appInfo.DBConnect = true;
@@ -140,10 +144,6 @@ public class DB
                     break;
             }
         }
-        else
-        {
-            AnsiConsole.MarkupLine("[red]Database connection failed![/]");
-        }
     }
         private static void ExecuteSubtool(Subtool subtool)
     {
@@ -153,8 +153,8 @@ public class DB
         {
             FileName = subtool.Name,
             Arguments = subtool.Update,
-            WorkingDirectory = "" ,
-            CreateNoWindow = true,
+            WorkingDirectory = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\",
+            CreateNoWindow = false,
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true

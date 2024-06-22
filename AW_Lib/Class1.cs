@@ -1,11 +1,11 @@
-﻿using MongoDB.Bson;
+﻿using AW_Lib;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
-using static AW_Lib.Database;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AW_Lib
@@ -13,6 +13,20 @@ namespace AW_Lib
     public class LibraryInitializer
     {
         // Hier können Initialisierungsaufgaben hinzugefügt werden, falls benötigt
+        // Create a new instance of the DatabaseService class
+        public void Database()
+        {
+            // Connect 
+          var databaseService = new Database.DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
+
+        // Get the collection of tools
+        var toolsCollection = databaseService.GetCollection<Tool>("Tool");
+        }
+
+        internal void DatabaseService()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public interface IAppInfo
@@ -63,19 +77,16 @@ namespace AW_Lib
         public string Update { get; set; } = "";
         public string Author { get; set; } = "AW";
         public string GitHub { get; set; } = "";
-        public string ExecutablePath { get; set; } = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\Musik.cs";
+        public string ExecutablePath { get; set; } = "";
         public string Arguments { get; set; } = "";
         public string WorkingDirectory { get; set; } =  "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\";
     }
     public class NewTool
-    {
+    {      
+       
         void LocalTool()
         {
-            // Create a new instance of the DatabaseService class
-            var databaseService = new DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
 
-            // Get the collection of tools
-            var toolsCollection = databaseService.GetCollection<Tool>("Tool");
 
 
 
@@ -105,8 +116,8 @@ namespace AW_Lib
     }
             };
 
-            // Insert the new tool into the collection
-            toolsCollection.InsertOne(newTool);
+            }
+      
         }
     }
     public class SubtoolExecutor
@@ -162,7 +173,7 @@ namespace AW_Lib
 
             public bool Ping()
             {    
-                AppInfo Info = new AppInfo();
+                IAppInfo Info = new AppInfo();
 
                 try
                 {
@@ -202,7 +213,7 @@ namespace AW_Lib
                 }
                 catch (MongoException ex)
                 {
-                    Console.WriteLine($"Error retrieving collection '{name}': {ex.Message}");
+                    Console.WriteLine($"Error '{name}': {ex.Message}");
                     throw; // Optionally handle or log the exception further
                 }
             }
@@ -231,4 +242,4 @@ namespace AW_Lib
             }
         }
     }
-}
+
