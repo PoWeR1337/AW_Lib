@@ -39,7 +39,9 @@ class Program
 
     public static void Titel()
     {
-                           IAppInfo appInfo = new AppInfo();
+          
+        IAppInfo appInfo = new AppInfo();
+
         try
         {
  
@@ -151,7 +153,7 @@ public class DB
         {
             FileName = subtool.Name,
             Arguments = subtool.Update,
-            WorkingDirectory = subtool.GitHub,
+            WorkingDirectory = "" ,
             CreateNoWindow = true,
             UseShellExecute = false,
             RedirectStandardOutput = true,

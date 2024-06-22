@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using static AW_Lib.Database;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AW_Lib
@@ -50,21 +51,63 @@ namespace AW_Lib
 
         public ObjectId Id { get; set; }
         public string Name { get; set; } = "AWET";
-        public List<Subtool> Subtools { get; set; }
+        public List<Subtool> Subtools { get; set; } 
     }
     public class Subtool
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = "1337";
+        public string Id { get; set; } = "";
 
-        public string Name { get; set; } = "AW";
+        public string Name { get; set; } = "";
         public string Update { get; set; } = "";
         public string Author { get; set; } = "AW";
         public string GitHub { get; set; } = "";
-        public string ExecutablePath { get; set; } = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\Program.cs";
+        public string ExecutablePath { get; set; } = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\Musik.cs";
         public string Arguments { get; set; } = "";
-        public string WorkingDirectory { get; set; } = "";
+        public string WorkingDirectory { get; set; } =  "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\";
+    }
+    public class NewTool
+    {
+        void LocalTool()
+        {
+            // Create a new instance of the DatabaseService class
+            var databaseService = new DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
+
+            // Get the collection of tools
+            var toolsCollection = databaseService.GetCollection<Tool>("Tool");
+
+
+
+            // Create a new tool
+            var newTool = new Tool
+            {
+                Name = "AW",
+                Subtools = new List<Subtool>
+    {
+        new Subtool
+        {
+            // option | Custom / Repositorie
+            Name = "AWE",
+            // Last update
+            Update = "",
+            // Custom | ToolName
+            Author = "AW",
+            // Option
+            GitHub = "",
+            // direct path / custom path
+            ExecutablePath = "",
+            // start parameter | --update
+            Arguments = "",
+            // Globalisieren
+            WorkingDirectory = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\"
+        }
+    }
+            };
+
+            // Insert the new tool into the collection
+            toolsCollection.InsertOne(newTool);
+        }
     }
     public class SubtoolExecutor
     {

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Soundcloud
+namespace AW_Lib.Audio.Soundcloud
 {
     public class Sound
     {
         public string cloud = " CLOUD";
     }
 
-   
+
 }

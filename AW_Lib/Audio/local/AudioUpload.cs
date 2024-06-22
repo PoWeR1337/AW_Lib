@@ -8,21 +8,21 @@ using NAudio;
 using NAudio.Wave;
 
 
-namespace AudioGet
+namespace AW_Lib.Audio.local
 {
-  
- 
-
-        public class Upload 
-        {
-            public string URL { get; set; } = "Leer";
-            public static string Path { get; set; } = "C:\\Users\\nfszo\\Desktop\\weck mich.wav";
-            public DateTime currentDate { get; set; } = DateTime.Now;
-        
 
 
 
-       public static void File()
+    public class Upload
+    {
+        public string URL { get; set; } = "Leer";
+        public static string Path { get; set; } = "C:\\Users\\nfszo\\Desktop\\weck mich.wav";
+        public DateTime currentDate { get; set; } = DateTime.Now;
+
+
+
+
+        public static void File()
         { // URL oder lokaler Pfad
           // string audioPath = "C:/path/to/local/audiofile.mp3"; // Beispiel für lokalen Pfad
 
@@ -49,13 +49,13 @@ namespace AudioGet
 
 
 
-// 
+    // 
 
-class File
+    class File
     {
-       
+
     }
 
 
-   
+
 }

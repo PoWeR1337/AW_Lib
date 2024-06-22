@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AW_Lib.Audio
+namespace AW_Lib.Audio.local
 {
     internal class Converter
     {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using TelegramBack;
 
-namespace CTelegegram
+namespace ConsoleApp.tools.local
 {
     internal class TelegramConsole
     {
@@ -43,7 +43,7 @@ namespace CTelegegram
             // APP Version separator
             var Bot_Tok = new Rule($"[red]{appInfo.Tooken}[/]")
                 .Centered();
-            
+
 
             // Render the interface
             AnsiConsole.Write(header);
@@ -61,10 +61,10 @@ namespace CTelegegram
 
             AnsiConsole.Write(Bot_Tok1);
             Console.ReadKey();
-            
+
         }
 
 
-        
+
     }
 }

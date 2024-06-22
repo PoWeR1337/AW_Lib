@@ -6,10 +6,9 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using AudioGet;
-using Detect;
+using AW_Lib.Audio.local;
 
-namespace Musik
+namespace ConsoleApp.tools.local
 {
     internal class Musik
     {
@@ -65,11 +64,11 @@ namespace Musik
 
             var selectedOption = AnsiConsole.Prompt(menu);
 
-            switch(selectedOption)
+            switch (selectedOption)
             {
                 case "Local Path":
                     pfad = AnsiConsole.Ask<string>("Kompletter [green]Pfad[/]!");
-                    
+
                     pfad = Upload.Path;
                     break;
                 case "URL":
@@ -83,7 +82,7 @@ namespace Musik
                     Path();
                     break;
             }
-        
+
         }
         static void MusikHauptmenu()
         {
@@ -126,7 +125,7 @@ namespace Musik
 
         static void Analyzer()
         {
-            AudioGet.Upload.File();
+            Upload.File();
             BPM bpm = new BPM();
             BPM.bpm();
             Console.ReadKey();
