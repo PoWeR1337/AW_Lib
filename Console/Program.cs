@@ -30,6 +30,7 @@ class Program
         {
             Console.Clear();
             AnsiConsole.WriteException(ex);
+            Console.ReadLine();
             MainMenuKonstruktor();
         }
         // Omitted
@@ -81,7 +82,7 @@ public class DB
     public static void Connect()
     {
 
-        if (!_dbService.Ping())
+        if (_dbService.Ping())
         {
             AnsiConsole.MarkupLine("[red]Database connection failed![/]");
         }
