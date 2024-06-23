@@ -1,76 +1,49 @@
 ﻿using Spectre.Console;
 using AW_Lib;
 using MongoDB.Driver;
+using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using static Database;
-
 
 class Program
 {
     static void Main(string[] args)
-    {  
-        MainMenuKonstruktor();
-    }
-
-   public static void MainMenuKonstruktor()
     {
-        AnsiConsole.Status()
-    .AutoRefresh(false)
-    .Spinner(Spinner.Known.Star)
-    .SpinnerStyle(Style.Parse("green bold"))
-    .Start("Laden...", ctx =>
-    {
-
-        try
-        {
-         Titel();
-         DB.Connect();
-        }
-        catch(Exception ex)
-        {
-            Console.Clear();
-            AnsiConsole.WriteException(ex);
-            Console.ReadLine();
-            MainMenuKonstruktor();
-        }
-        // Omitted
-        ctx.Refresh();
-    });
-
+        Titel();
+        DB.Connect();
     }
 
     public static void Titel()
     {
-          
         IAppInfo appInfo = new AppInfo();
 
         try
         {
- 
-        string IP = A_IP.GetPublicIpAddress();
-        bool db = appInfo.DBConnect;
-        string update = appInfo.Updated;
-        string autor = appInfo.Author;
-        double ping = appInfo.Ping;
-        string On = db ? "[green]Online[/]" : "[red]Offline[/]"; 
-        var header = new FigletText(appInfo.Title).Centered().Color(Color.Blue);
-        var versionSeparator = new Rule($"[red]{appInfo.Version}[/]").Centered();
-        var IPs = new Rule($"[red]{IP}[/]").Centered();
-        var DBC = new Rule(On).Centered();
-        var AT = new Rule($"[red]{autor}[/]").Centered();
-        var Separator = new Rule($"[red]{update}[/]").Centered();
+            string IP = A_IP.GetPublicIpAddress();
+            bool db = appInfo.DBConnect;
+            string update = appInfo.Updated;
+            string autor = appInfo.Author;
+            double ping = appInfo.Ping;
+            string On = db ? "[green]Online[/]" : "[red]Offline[/]";
+            var header = new FigletText(appInfo.Title).Centered().Color(Color.Blue);
+            var versionSeparator = new Rule($"[red]{appInfo.Version}[/]").Centered();
+            var IPs = new Rule($"[red]{IP}[/]").Centered();
+            var DBC = new Rule(On).Centered();
+            var AT = new Rule($"[red]{autor}[/]").Centered();
+            var Separator = new Rule($"[red]{update}[/]").Centered();
 
-        AnsiConsole.Write(header);
-        AnsiConsole.Write(DBC);
-        AnsiConsole.Write(IPs);
-        AnsiConsole.Write(Separator);
+            AnsiConsole.Write(header);
+            AnsiConsole.Write(DBC);
+            AnsiConsole.Write(IPs);
+            AnsiConsole.Write(Separator);
         }
-        catch(Exception Ex)
+        catch (Exception ex)
         {
-            AnsiConsole.WriteException(Ex);
+            AnsiConsole.WriteException(ex);
             Thread.Sleep(1000);
             Console.Clear();
-            MainMenuKonstruktor();
         }
     }
 }
@@ -78,11 +51,21 @@ class Program
 public class DB
 {
     private static DatabaseService _dbService;
-       
+
+    static DB()
+    {
+        _dbService = new DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
+    }
+
     public static void Connect()
     {
+        if (_dbService == null)
+        {
+            AnsiConsole.MarkupLine("[red]Database service is not initialized![/]");
+            return;
+        }
 
-        if (_dbService.Ping())
+        if (!_dbService.Ping())
         {
             AnsiConsole.MarkupLine("[red]Database connection failed![/]");
         }
@@ -91,13 +74,13 @@ public class DB
             AppInfo appInfo = new AppInfo();
             appInfo.DBConnect = true;
             appInfo.On = "Online";
-            // Load tools from database
+            // Load tools from the database
             var toolsCollection = _dbService.GetCollection<Tool>("Tool");
             var tools = toolsCollection.Find(tool => true).ToList();
 
             // Display tool menu
             var toolMenu = new SelectionPrompt<string>()
-               .Title("Wähle  [green]Tool[/] für details : ")
+               .Title("Wähle [green]Tool[/] für Details : ")
                .AddChoices(tools.Select(t => t.Name).ToArray());
 
             var selectedToolName = AnsiConsole.Prompt(toolMenu);
@@ -105,7 +88,7 @@ public class DB
 
             // Display subtool menu
             var subtoolMenu = new SelectionPrompt<string>()
-                .Title($"Wähle [green]Subtool[/] aus [blue]{selectedTool.Name}[/] für details / start : ")
+                .Title($"Wähle [green]Subtool[/] aus [blue]{selectedTool.Name}[/] für Details / Start : ")
                 .AddChoices(selectedTool.Subtools.Select(st => st.Name).ToArray());
 
             var selectedSubtoolName = AnsiConsole.Prompt(subtoolMenu);
@@ -134,8 +117,6 @@ public class DB
                     AnsiConsole.Write(table);
                     Console.ReadLine();
                     Console.Clear();
-                    Program p = new Program();
-                    Program.MainMenuKonstruktor();
                     break;
                 case "Start":
                     // Start the subtool
@@ -146,19 +127,34 @@ public class DB
             }
         }
     }
-        private static void ExecuteSubtool(Subtool subtool)
+
+    private static void ExecuteSubtool(Subtool subtool)
     {
-        // Execute the subtool here
-        // For example, you can use Process.Start to execute a command
-        Process.Start(new ProcessStartInfo
+        try
         {
-            FileName = subtool.Name,
-            Arguments = subtool.Update,
-            WorkingDirectory = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\",
-            CreateNoWindow = false,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        });
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = subtool.ExecutablePath,
+                Arguments = subtool.Arguments,
+                WorkingDirectory = subtool.WorkingDirectory,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            using Process process = Process.Start(startInfo);
+            process.OutputDataReceived += (sender, data) => Console.WriteLine(data.Data);
+            process.ErrorDataReceived += (sender, data) => Console.WriteLine($"Error: {data.Data}");
+
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            process.WaitForExit();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error executing subtool: {ex.Message}");
+        }
     }
 }
