@@ -6,23 +6,27 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AW_Lib
 {
     public class LibraryInitializer
     {
+ 
         // Hier können Initialisierungsaufgaben hinzugefügt werden, falls benötigt
         // Create a new instance of the DatabaseService class
         public void Database()
         {
             // Connect 
-          var databaseService = new Database.DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
+            var databaseService = new Database.DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
 
-        // Get the collection of tools
-        var toolsCollection = databaseService.GetCollection<Tool>("Tool");
+            // Get the collection of tools
+            var toolsCollection = databaseService.GetCollection<Tool>("Tool");
         }
 
+        internal void DatabaseService()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public interface IAppInfo
@@ -53,7 +57,7 @@ namespace AW_Lib
     }
 
     // MongoDB Model
-      
+
     public class Tool
     {
         [BsonRepresentation(BsonType.ObjectId)]
@@ -61,7 +65,7 @@ namespace AW_Lib
 
         public ObjectId Id { get; set; }
         public string Name { get; set; } = "AWET";
-        public List<Subtool> Subtools { get; set; } 
+        public List<Subtool> Subtools { get; set; }
     }
     public class Subtool
     {
@@ -75,11 +79,11 @@ namespace AW_Lib
         public string GitHub { get; set; } = "";
         public string ExecutablePath { get; set; } = "";
         public string Arguments { get; set; } = "";
-        public string WorkingDirectory { get; set; } =  "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\";
+        public string WorkingDirectory { get; set; } = "C:\\Users\\aw\\Source\\Repos\\AW_Lib\\Console\\tools\\local\\";
     }
     public class NewTool
-    {      
-       
+    {
+
         void LocalTool()
         {
 
@@ -112,130 +116,130 @@ namespace AW_Lib
     }
             };
 
-            }
-      
         }
+
     }
-    public class SubtoolExecutor
+}
+public class SubtoolExecutor
+{
+    private static void ExecuteSubtool(Subtool subtool)
     {
-        private static void ExecuteSubtool(Subtool subtool)
+        try
         {
-            try
+            ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = subtool.ExecutablePath,
-                    Arguments = subtool.Arguments,
-                    WorkingDirectory = subtool.WorkingDirectory,
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                };
+                FileName = subtool.ExecutablePath,
+                Arguments = subtool.Arguments,
+                WorkingDirectory = subtool.WorkingDirectory,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
 
-                using (Process process = Process.Start(startInfo))
-                {
-                    process.OutputDataReceived += (sender, data) => Console.WriteLine(data.Data);
-                    process.ErrorDataReceived += (sender, data) => Console.WriteLine($"Error: {data.Data}");
-
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
-
-                    process.WaitForExit();
-                }
-            }
-            catch (Exception ex)
+            using (Process process = Process.Start(startInfo))
             {
-                Console.WriteLine($"Error executing subtool: {ex.Message}");
+                process.OutputDataReceived += (sender, data) => Console.WriteLine(data.Data);
+                process.ErrorDataReceived += (sender, data) => Console.WriteLine($"Error: {data.Data}");
+
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                process.WaitForExit();
             }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error executing subtool: {ex.Message}");
+        }
     }
+}
 
-    // MongoDB Service
+// MongoDB Service
 
-    public class Database
+public class Database
+{
+    private readonly IMongoDatabase _database;
+
+    public class DatabaseService
     {
         private readonly IMongoDatabase _database;
 
-        public class DatabaseService
+        public DatabaseService(string connectionString, string databaseName)
         {
-            private readonly IMongoDatabase _database;
+            var client = new MongoClient(connectionString);
+            _database = client.GetDatabase(databaseName);
+        }
 
-            public DatabaseService(string connectionString, string databaseName)
+        public bool Ping()
+        {
+            IAppInfo Info = new AppInfo();
+
+            try
             {
-                var client = new MongoClient(connectionString);
-                _database = client.GetDatabase(databaseName);
-            }
-
-            public bool Ping()
-            {    
-                IAppInfo Info = new AppInfo();
-
-                try
+                var pingCommand = new BsonDocument { { "ping", 1 } };
+                var pingResult = _database.RunCommand<BsonDocument>(pingCommand);
+                var okValue = pingResult["ok"];
+                if (okValue is BsonInt32 okInt)
                 {
-                    var pingCommand = new BsonDocument { { "ping", 1 } };
-                    var pingResult = _database.RunCommand<BsonDocument>(pingCommand);
-                    var okValue = pingResult["ok"];
-                    if (okValue is BsonInt32 okInt)
-                    {
-                       
-                        Info.DBConnect = true;
-                        return okInt.Value == 1;
-                    }
-                    else if (okValue is BsonDouble okDouble)
-                    {
-                      
-                        Info.DBConnect = true;
-                        return okDouble.Value == 1.0;
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Unexpected type for 'ok' value");
-                    }
+
+                    Info.DBConnect = true;
+                    return okInt.Value == 1;
                 }
-
-                catch (Exception ex)
+                else if (okValue is BsonDouble okDouble)
                 {
-                    Console.WriteLine($"MongoDB Ping Error: {ex.Message}");
-                    return false;
+
+                    Info.DBConnect = true;
+                    return okDouble.Value == 1.0;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unexpected type for 'ok' value");
                 }
             }
 
-            public IMongoCollection<T> GetCollection<T>(string name) where T : class
+            catch (Exception ex)
             {
-                try
-                {
-                    return _database.GetCollection<T>(name);
-                }
-                catch (MongoException ex)
-                {
-                    Console.WriteLine($"Error '{name}': {ex.Message}");
-                    throw; // Optionally handle or log the exception further
-                }
+                Console.WriteLine($"MongoDB Ping Error: {ex.Message}");
+                return false;
             }
         }
 
+        public IMongoCollection<T> GetCollection<T>(string name) where T : class
+        {
+            try
+            {
+                return _database.GetCollection<T>(name);
+            }
+            catch (MongoException ex)
+            {
+                Console.WriteLine($"Error '{name}': {ex.Message}");
+                throw; // Optionally handle or log the exception further
+            }
+        }
     }
 
-    // IP Address Helper
+}
 
-    public class A_IP
+// IP Address Helper
+
+public class A_IP
+{
+    public static string GetPublicIpAddress()
     {
-        public static string GetPublicIpAddress()
+        using (var client = new WebClient())
         {
-            using (var client = new WebClient())
+            try
             {
-                try
-                {
-                    string response = client.DownloadString("https://ipinfo.io/ip");
-                    return response.Trim();
-                }
-                catch (WebException ex)
-                {
-                    Console.WriteLine($"Error retrieving public IP address: {ex.Message}");
-                    return "None";
-                }
+                string response = client.DownloadString("https://ipinfo.io/ip");
+                return response.Trim();
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine($"Error retrieving public IP address: {ex.Message}");
+                return "None";
             }
         }
     }
+}
 
