@@ -23,10 +23,6 @@ namespace AW_Lib
         var toolsCollection = databaseService.GetCollection<Tool>("Tool");
         }
 
-        internal void DatabaseService()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public interface IAppInfo
