@@ -17,7 +17,7 @@ namespace AW_Lib
         public void Database()
         {
             // Connect 
-            var databaseService = new Database.DatabaseService("mongodb+srv://power:Joanna1337,,.@aw.71zfrso.mongodb.net/?retryWrites=true&w=majority&appName=aw", "aw");
+            var databaseService = new Database.DatabaseService("");
 
             // Get the collection of tools
             var toolsCollection = databaseService.GetCollection<Tool>("Tool");
