@@ -1,33 +1,21 @@
-﻿using Spectre.Console;
-using AW_Lib;
+﻿using AW_Lib;
 using Musik;
 using Sad;
-
+using Spectre.Console;
 
 namespace ConsoleApp
 {
-
-    public class Base
+    internal class ProgramBase
     {
-        
-         Base()
-        {
-           TitelModern();
-           Safe.RegisterLoginMenu();
-            MainMenuKonstruktor();
-        }
-
-
 
 
         // Moderner Titelbereich mit Panel und Grid
-        static void TitelModern()
+        public static void TitelModern(string ip)
         {
-            string ip = A_IP.GetPublicIpAddress();
             IAppInfo appInfo = new AppInfo
             {
                 Title = "AWET",
-                Version = "0.4",
+                Version = "0.2",
                 currentDate = DateTime.Now
             };
 
@@ -126,13 +114,16 @@ namespace ConsoleApp
             while (true)
             {
                 Console.Clear();
-                TitelModern();
+                TitelModern(A_IP.GetPublicIpAddress());
                 if (!H_Menu())
                     break;
             }
         }
 
-       
+        private static void RegisterLoginMenu()
+        {
+          //  throw new NotImplementedException();
+          Console.WriteLine ("RegisterLoginMenu is not implemented yet.");
+        }
     }
-
 }

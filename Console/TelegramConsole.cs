@@ -54,7 +54,7 @@ namespace CTelegegram
 
             // nur wenn kein tooken da ist soll :
 
-            appInfo.Tooken = Console.ReadLine();
+           // appInfo.Tooken = Console.WriteLine("Token ");
 
             var Bot_Tok1 = new Rule($"[red]{appInfo.Tooken}[/]")
              .Centered();

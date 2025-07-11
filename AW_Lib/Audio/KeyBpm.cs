@@ -6,7 +6,11 @@ namespace Detect
 {
 public class BPM
 {
-    public static void bpm()
+        public BPM()
+        {
+        }
+
+        public static void bpm()
     {
         Upload upload = new Upload();
         string audioFilePath = Upload.Path; // Passe den Pfad zur Audiodatei entsprechend deiner Dateistruktur an
